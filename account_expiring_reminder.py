@@ -1,19 +1,18 @@
 #! python3
 # account_expiring_reminder.py - Sends emails based on expiration date in spreadsheet.
-import openpyxl
 import smtplib
-import sys
 from datetime import timedelta, datetime
+
+import openpyxl
 
 # 15 days until password expires
 endDate = datetime.today() + timedelta(days=15)
 
-
 # Open the spreadsheet and get the latest dues status.
-# spreadsheet should have three columns name, email, experation date
-wb = openpyxl.load_workbook('FILE_PATH_Here.xlsx')
+# spreadsheet should have three columns name, email, expiration date
+wb = openpyxl.load_workbook('expiring_accounts.xlsx')
 
-sheet = wb.get_sheet_by_name('Sheet1')
+sheet = wb['Sheet1']
 
 lastCol = sheet.max_column
 
@@ -30,8 +29,7 @@ for r in range(3, sheet.max_row + 1):
         email = sheet.cell(row=r, column=2).value
         expiringUsers[name] = email
 # uncomment to view users in expiringUsers Obj
-# print(expiringUsers)
-
+print(expiringUsers)
 
 #  Log in to email account.
 # Enter smtp address and port number
@@ -45,7 +43,8 @@ smtpObj.starttls()
 
 
 #
-smtpObj.login('example@domain.com', input('Enter email password: '))
+smtpObj.login('{ENTER SENDING EMAIL ADDRESS HERE}',
+              input('Enter email password: '))
 
 ''' sendmail() method requires three arguments. from address, recipient's, and email body.
 The start of the email body string must begin with 'Subject: \n' for the
@@ -61,11 +60,21 @@ Subject: {name} Domain Account Expiring soon.
 
 Dear {name},
 
-message here
+Your Domain password will expire on {expiry}. Please change it as soon as possible.
+To Change your password, follow the method below:
+1. On your Windows computer
+    a. If you're not in the office, connect to VPN.
+    b. Log into your computer as usual and make sure you are connected to the internet (VPN if remote).
+    c. Press Ctrl-Alt-Del and click on 'Change Password'.
+    d. Fill in your old password and set a new password.
+    e. Press OK to return to your desktop
+    
+    Please make sure to do this before the Expiration date or you will be locked out.
+    
     """
     print(f'Sending email to {email}...')
     sendmailStatus = smtpObj.sendmail(
-        'example@domain.com', email, message)
+        '{ENTER SENDING EMAIL ADDRESS HERE}', email, message)
     if sendmailStatus != {}:
         print(f'There was a problem sending email to {name}: {email}')
         smtpObj.quit()
