@@ -8,7 +8,7 @@ import openpyxl
 # 15 days until password expires
 endDate = datetime.today() + timedelta(days=15)
 
-# Open the spreadsheet and get the latest dues status.
+
 # spreadsheet should have three columns name, email, expiration date
 wb = openpyxl.load_workbook('expiring_accounts.xlsx')
 
